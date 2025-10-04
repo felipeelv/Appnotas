@@ -31,10 +31,7 @@ export default function Alunos() {
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertAluno) => {
-      return await apiRequest("/api/alunos", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/alunos", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/alunos"] });
@@ -48,10 +45,7 @@ export default function Alunos() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertAluno }) => {
-      return await apiRequest(`/api/alunos/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", `/api/alunos/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/alunos"] });
@@ -65,9 +59,7 @@ export default function Alunos() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/alunos/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/alunos/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/alunos"] });

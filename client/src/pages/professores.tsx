@@ -26,10 +26,7 @@ export default function Professores() {
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertProfessor) => {
-      return await apiRequest("/api/professores", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/professores", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/professores"] });
@@ -43,10 +40,7 @@ export default function Professores() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertProfessor }) => {
-      return await apiRequest(`/api/professores/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", `/api/professores/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/professores"] });
@@ -60,9 +54,7 @@ export default function Professores() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/professores/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/professores/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/professores"] });

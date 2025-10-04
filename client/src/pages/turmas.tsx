@@ -27,10 +27,7 @@ export default function Turmas() {
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertTurma) => {
-      return await apiRequest("/api/turmas", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/turmas", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/turmas"] });
@@ -44,10 +41,7 @@ export default function Turmas() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertTurma }) => {
-      return await apiRequest(`/api/turmas/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", `/api/turmas/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/turmas"] });
@@ -61,9 +55,7 @@ export default function Turmas() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/turmas/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/turmas/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/turmas"] });

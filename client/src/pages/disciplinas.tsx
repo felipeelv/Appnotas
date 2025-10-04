@@ -26,10 +26,7 @@ export default function Disciplinas() {
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertDisciplina) => {
-      return await apiRequest("/api/disciplinas", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/disciplinas", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/disciplinas"] });
@@ -43,10 +40,7 @@ export default function Disciplinas() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: InsertDisciplina }) => {
-      return await apiRequest(`/api/disciplinas/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", `/api/disciplinas/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/disciplinas"] });
@@ -60,9 +54,7 @@ export default function Disciplinas() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/disciplinas/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/disciplinas/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/disciplinas"] });
