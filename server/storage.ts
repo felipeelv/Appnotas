@@ -1,10 +1,10 @@
 import { db } from "./db";
-import { 
-  turmas, professores, disciplinas, alunos, professorDisciplinaTurma,
-  type Turma, type Professor, type Disciplina, type Aluno, type ProfessorDisciplinaTurma,
-  type InsertTurma, type InsertProfessor, type InsertDisciplina, type InsertAluno, type InsertProfessorDisciplinaTurma
+import {
+  turmas, professores, disciplinas, alunos, professorDisciplinaTurma, notas,
+  type Turma, type Professor, type Disciplina, type Aluno, type ProfessorDisciplinaTurma, type Nota,
+  type InsertTurma, type InsertProfessor, type InsertDisciplina, type InsertAluno, type InsertProfessorDisciplinaTurma, type InsertNota
 } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   getTurmas(): Promise<Turma[]>;
@@ -35,6 +35,14 @@ export interface IStorage {
   getAssociacao(id: number): Promise<ProfessorDisciplinaTurma | undefined>;
   createAssociacao(data: InsertProfessorDisciplinaTurma): Promise<ProfessorDisciplinaTurma>;
   deleteAssociacao(id: number): Promise<void>;
+
+  getNotas(): Promise<Nota[]>;
+  getNota(id: number): Promise<Nota | undefined>;
+  getNotasByAluno(alunoId: number): Promise<Nota[]>;
+  getNotasByTurma(turmaId: number): Promise<Nota[]>;
+  createNota(data: InsertNota): Promise<Nota>;
+  updateNota(id: number, data: InsertNota): Promise<Nota | undefined>;
+  deleteNota(id: number): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -146,6 +154,48 @@ export class DbStorage implements IStorage {
 
   async deleteAssociacao(id: number): Promise<void> {
     await db.delete(professorDisciplinaTurma).where(eq(professorDisciplinaTurma.id, id));
+  }
+
+  async getNotas(): Promise<Nota[]> {
+    return await db.select().from(notas);
+  }
+
+  async getNota(id: number): Promise<Nota | undefined> {
+    const result = await db.select().from(notas).where(eq(notas.id, id));
+    return result[0];
+  }
+
+  async getNotasByAluno(alunoId: number): Promise<Nota[]> {
+    return await db.select().from(notas).where(eq(notas.alunoId, alunoId));
+  }
+
+  async getNotasByTurma(turmaId: number): Promise<Nota[]> {
+    const result = await db
+      .select({
+        id: notas.id,
+        alunoId: notas.alunoId,
+        disciplinaId: notas.disciplinaId,
+        valor: notas.valor,
+        periodo: notas.periodo,
+      })
+      .from(notas)
+      .innerJoin(alunos, eq(notas.alunoId, alunos.id))
+      .where(eq(alunos.turmaId, turmaId));
+    return result;
+  }
+
+  async createNota(data: InsertNota): Promise<Nota> {
+    const result = await db.insert(notas).values(data).returning();
+    return result[0];
+  }
+
+  async updateNota(id: number, data: InsertNota): Promise<Nota | undefined> {
+    const result = await db.update(notas).set(data).where(eq(notas.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteNota(id: number): Promise<void> {
+    await db.delete(notas).where(eq(notas.id, id));
   }
 }
 

@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import SelecaoTurmas from "@/pages/selecao-turmas";
+import LancarNotas from "@/pages/lancar-notas";
 import Turmas from "@/pages/turmas";
 import Professores from "@/pages/professores";
 import Disciplinas from "@/pages/disciplinas";
@@ -15,7 +17,8 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Turmas} />
+      <Route path="/" component={SelecaoTurmas} />
+      <Route path="/lancar-notas/:id" component={LancarNotas} />
       <Route path="/turmas" component={Turmas} />
       <Route path="/professores" component={Professores} />
       <Route path="/disciplinas" component={Disciplinas} />
