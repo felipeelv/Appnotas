@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import type { Aluno, InsertAluno, Turma } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -12,10 +13,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertAlunoSchema } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Home } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 export default function Alunos() {
+  const [, navigate] = useLocation();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -77,6 +79,14 @@ export default function Alunos() {
 
   return (
     <div className="p-8">
+      <Button
+        variant="ghost"
+        onClick={() => navigate("/")}
+        className="mb-4"
+      >
+        <Home className="w-4 h-4 mr-2" />
+        Voltar para Página Inicial
+      </Button>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold" data-testid="text-page-title">Alunos</h1>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
