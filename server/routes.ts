@@ -1,12 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { 
-  insertTurmaSchema, 
-  insertProfessorSchema, 
-  insertDisciplinaSchema, 
+import {
+  insertTurmaSchema,
+  insertProfessorSchema,
+  insertDisciplinaSchema,
   insertAlunoSchema,
-  insertProfessorDisciplinaTurmaSchema 
+  insertProfessorDisciplinaTurmaSchema,
+  insertNotaSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -190,6 +191,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/associacoes/:id", async (req, res) => {
     await storage.deleteAssociacao(parseInt(req.params.id));
+    res.status(204).send();
+  });
+
+  app.get("/api/notas", async (req, res) => {
+    const notas = await storage.getNotas();
+    res.json(notas);
+  });
+
+  app.get("/api/notas/:id", async (req, res) => {
+    const nota = await storage.getNota(parseInt(req.params.id));
+    if (!nota) {
+      return res.status(404).json({ message: "Nota não encontrada" });
+    }
+    res.json(nota);
+  });
+
+  app.get("/api/notas/aluno/:alunoId", async (req, res) => {
+    const notas = await storage.getNotasByAluno(parseInt(req.params.alunoId));
+    res.json(notas);
+  });
+
+  app.get("/api/notas/turma/:turmaId", async (req, res) => {
+    const notas = await storage.getNotasByTurma(parseInt(req.params.turmaId));
+    res.json(notas);
+  });
+
+  app.post("/api/notas", async (req, res) => {
+    const result = insertNotaSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: "Dados inválidos", errors: result.error });
+    }
+    const nota = await storage.createNota(result.data);
+    res.status(201).json(nota);
+  });
+
+  app.put("/api/notas/:id", async (req, res) => {
+    const result = insertNotaSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ message: "Dados inválidos", errors: result.error });
+    }
+    const nota = await storage.updateNota(parseInt(req.params.id), result.data);
+    if (!nota) {
+      return res.status(404).json({ message: "Nota não encontrada" });
+    }
+    res.json(nota);
+  });
+
+  app.delete("/api/notas/:id", async (req, res) => {
+    await storage.deleteNota(parseInt(req.params.id));
     res.status(204).send();
   });
 
